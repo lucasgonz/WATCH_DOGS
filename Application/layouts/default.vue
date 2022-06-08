@@ -55,11 +55,6 @@ export default {
           title: 'Market',
           to: '/',
         },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire',
-        },
       ],
       miniVariant: false,
       right: true,

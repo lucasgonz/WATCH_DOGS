@@ -1,7 +1,8 @@
 <template>
   <div class="card">
     <div class="group">
-      <status></status>
+      <!-- status to component true | false | undefined (drone out of service) -->
+      <status :status="isRenting"></status>
       <div>
         <b>Name</b>
         <p>model</p>
@@ -17,7 +18,16 @@
       <p>End time</p>
     </div>
     <div>
-      <p><v-icon color="success">mdi-play</v-icon></p>
+      <!-- Switch renting state and change icon -->
+      <v-btn
+        icon
+        fab
+        small
+        :color="isRenting ? 'error' : 'success'"
+        @click="isRenting = !isRenting"
+      >
+        <v-icon>{{ isRenting ? 'mdi-stop' : 'mdi-play' }}</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -31,6 +41,11 @@ export default Vue.extend({
       type: Object,
       default: null,
     },
+  },
+  data() {
+    return {
+      isRenting: false,
+    }
   },
 })
 </script>

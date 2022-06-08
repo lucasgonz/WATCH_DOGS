@@ -1,5 +1,7 @@
 <template>
-  <div class="status"><span class="dot"></span></div>
+  <div class="status">
+    <span v-bind:class="classObject" class="dot"></span>
+  </div>
 </template>
 
 <script lang="ts">
@@ -8,8 +10,21 @@ export default Vue.extend({
   name: 'Status',
   props: {
     status: {
-      type: String,
+      type: Boolean || undefined,
       default: undefined,
+    },
+  },
+  computed: {
+    classObject() {
+      if (this.status === undefined) {
+        return {
+          outOfService: true,
+        }
+      }
+      return {
+        active: !this.status,
+        unavailable: this.status,
+      }
     },
   },
 })
@@ -19,7 +34,7 @@ export default Vue.extend({
 .dot {
   height: 12px;
   width: 12px;
-  background-color: #bbb;
+  background-color: #7d7d7d;
   border-radius: 50%;
   display: inline-block;
   margin-right: 0px;
@@ -29,5 +44,13 @@ export default Vue.extend({
 .status {
   align-self: center;
   margin-right: 0px !important;
+}
+
+.active {
+  background-color: #4caf50;
+}
+
+.unavailable {
+  background-color: #f44336;
 }
 </style>

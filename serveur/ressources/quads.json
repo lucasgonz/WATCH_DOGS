@@ -1,0 +1,105 @@
+{
+	"quads":[
+		{
+			"manufacturer":"Parrot",
+			"model":"Anafi",
+			"maxFlightTimeMinutes":25,
+			"chargePct":0
+		},{
+			"manufacturer":"Yuneec",
+			"model":"Breeze",
+			"maxFlightTimeMinutes":22,
+			"chargePct":100
+		},{
+			"manufacturer":"Cheerson",
+			"model":"CX-STARS",
+			"maxFlightTimeMinutes":34,
+			"chargePct":98
+		},{
+			"manufacturer":"Cheerson",
+			"model":"CX-32W",
+			"maxFlightTimeMinutes":7,
+			"chargePct":72
+		},{
+			"manufacturer":"Cheerson",
+			"model":"CX-20",
+			"maxFlightTimeMinutes":15,
+			"chargePct":2
+		},{
+			"manufacturer":"Blade",
+			"model":"Nano QX",
+			"maxFlightTimeMinutes":28,
+			"chargePct":52
+		},{
+			"manufacturer":"3DR",
+			"model":"Solo",
+			"maxFlightTimeMinutes":20,
+			"chargePct":60
+		},{
+			"manufacturer":"DJI",
+			"model":"Mavic 2",
+			"maxFlightTimeMinutes":31,
+			"chargePct":52
+		},{
+			"manufacturer":"DJI",
+			"model":"Spark",
+			"maxFlightTimeMinutes":16,
+			"chargePct":100
+		},{
+			"manufacturer":"DJI",
+			"model":"Phantom 4",
+			"maxFlightTimeMinutes":28,
+			"chargePct":93
+		},{
+			"manufacturer":"Halo",
+			"model":"Drone Pro",
+			"maxFlightTimeMinutes":45,
+			"chargePct":80
+		},{
+			"manufacturer":"Halo",
+			"model":"Stealth Pro",
+			"maxFlightTimeMinutes":22,
+			"chargePct":93
+		},{
+			"manufacturer":"JJRC",
+			"model":"H78G",
+			"maxFlightTimeMinutes":15,
+			"chargePct":93
+		},{
+			"manufacturer":"JJRC",
+			"model":"H66",
+			"maxFlightTimeMinutes":6,
+			"chargePct":3
+		},{
+			"manufacturer":"JJRC",
+			"model":"X7",
+			"maxFlightTimeMinutes":23,
+			"chargePct":23
+		},{
+			"manufacturer":"Walkera",
+			"model":"RODEO F110",
+			"maxFlightTimeMinutes":27,
+			"chargePct":70
+		},{
+			"manufacturer":"Walkera",
+			"model":"RODEO F150",
+			"maxFlightTimeMinutes":17,
+			"chargePct":93
+		},{
+			"manufacturer":"Walkera",
+			"model":"Phantom4",
+			"maxFlightTimeMinutes":28,
+			"chargePct":93
+		},{
+			"manufacturer":"JJRC",
+			"model":"H42WH",
+			"maxFlightTimeMinutes":15,
+			"chargePct":93
+		},{
+			"manufacturer":"JJRC",
+			"model":"H40WH",
+			"maxFlightTimeMinutes":18,
+			"chargePct":93
+		}
+	]
+}

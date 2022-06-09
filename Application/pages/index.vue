@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <card></card>
+    <!-- for each drones in drone add a new card and pass the data -->
+    <card v-for="drone in drones" :key="drone.model" :data="drone"></card>
   </div>
 </template>
 
@@ -11,39 +12,15 @@ export default {
   name: 'IndexPage',
   data() {
     return {
-      drones: [
-        {
-          manufacturer: 'Parrot',
-          model: 'Anafi',
-          maxFlightTimeMinutes: 25,
-          chargePct: 0,
-        },
-        {
-          manufacturer: 'Yuneec',
-          model: 'Breeze',
-          maxFlightTimeMinutes: 22,
-          chargePct: 100,
-        },
-        {
-          manufacturer: 'Cheerson',
-          model: 'CX-STARS',
-          maxFlightTimeMinutes: 34,
-          chargePct: 98,
-        },
-        {
-          manufacturer: 'Cheerson',
-          model: 'CX-32W',
-          maxFlightTimeMinutes: 7,
-          chargePct: 72,
-        },
-        {
-          manufacturer: 'Cheerson',
-          model: 'CX-20',
-          maxFlightTimeMinutes: 15,
-          chargePct: 2,
-        },
-      ],
+      drones: [],
     }
+  },
+
+  async mounted() {
+    // HTTP request to get drones
+    const response = await this.$axios.get('/api/drones')
+    this.drones = response.data
+    console.log(this.drones)
   },
 }
 </script>

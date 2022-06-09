@@ -1,21 +1,26 @@
 <template>
   <div class="card">
     <div class="group">
-      <!-- status to component true | false | undefined (drone out of service) -->
+      <!-- Status to component true | false | undefined (drone out of service) -->
       <status :status="isRenting"></status>
-      <div>
-        <b>Name</b>
-        <p>model</p>
+      <div class="info-text">
+        <b>{{ data.manufacturer }}</b>
+        <p class="snd">{{ data.model }}</p>
       </div>
     </div>
-
+    <!-- Chargin bar of drone -->
     <div>
-      <p>Chargement</p>
-      <v-progress-linear rounded value="80" color="green"></v-progress-linear>
+      <p>Usage</p>
+      <v-progress-linear
+        rounded
+        :value="data.chargePct"
+        :color="interpolateColor(data.chargePct)"
+      ></v-progress-linear>
     </div>
+    <!-- Return time or time left for drone -->
     <div>
       <p>Temps</p>
-      <p>End time</p>
+      <p class="snd">End time</p>
     </div>
     <div>
       <!-- Switch renting state and change icon -->
@@ -47,6 +52,20 @@ export default Vue.extend({
       isRenting: false,
     }
   },
+  methods: {
+    // from a number between 0 and 100, return color between green, orange and red
+    interpolateColor(value: number) {
+      if (value < 33) {
+        return 'red'
+      } else if (value < 66) {
+        return 'orange'
+      } else {
+        return 'green'
+      }
+    },
+    // if
+  },
+  computed: {},
 })
 </script>
 
@@ -59,6 +78,7 @@ export default Vue.extend({
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .card div {
@@ -73,5 +93,13 @@ export default Vue.extend({
 
 .group {
   flex-direction: row !important;
+}
+
+.info-text {
+  width: 100px;
+}
+
+.snd {
+  color: rgb(155, 155, 155);
 }
 </style>

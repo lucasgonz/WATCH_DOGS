@@ -1,26 +1,29 @@
 <template>
   <div class="container">
     <!-- for each drones in drone add a new card and pass the data -->
-    <card v-for="drone in drones" :key="drone.model" :data="drone"></card>
+    <card v-for="drone in data" :key="drone.model" :data="drone"></card>
   </div>
 </template>
 
 <script>
 import card from '../components/card.vue'
+import { mapState } from 'vuex'
 export default {
   components: { card },
   name: 'IndexPage',
-  data() {
-    return {
-      drones: [],
-    }
-  },
 
+  computed: {
+    // map drones stats from vuex store
+    ...mapState({
+      data: (state) => state.drones.data,
+    }),
+  },
   async mounted() {
-    // HTTP request to get drones
-    const response = await this.$axios.get('/api/drones')
-    this.drones = response.data
-    console.log(this.drones)
+    // fetch drones from vuex
+    this.$store.dispatch('drones/fetchDrones').then(() => {
+      this.$store.dispatch('drones/sortDronesByPropretie', 'chargePct')
+    })
+    // sort drones from vuex
   },
 }
 </script>

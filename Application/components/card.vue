@@ -9,7 +9,7 @@
       </div>
     </div>
     <!-- Chargin bar of drone -->
-    <div>
+    <div class="info-text">
       <p>Usage</p>
       <v-progress-linear
         rounded
@@ -18,9 +18,13 @@
       ></v-progress-linear>
     </div>
     <!-- Return time or time left for drone -->
-    <div>
-      <p>Temps</p>
-      <p class="snd">End time</p>
+    <div v-if="isRenting">
+      <p>Return Time</p>
+      <p class="snd">{{ returnTime }}</p>
+    </div>
+    <div v-else>
+      <p>Can Fly</p>
+      <p class="snd">{{ getMinutesLeft() }} min</p>
     </div>
     <div>
       <!-- Switch renting state and change icon -->
@@ -30,7 +34,7 @@
         small
         :disabled="canBeRented() ? false : true"
         :color="rentingClass"
-        @click="canBeRented() ? (isRenting = !isRenting) : undefined"
+        @click="canBeRented() ? startRenting() : undefined"
       >
         <v-icon>{{ isRenting ? 'mdi-stop' : 'mdi-play' }}</v-icon>
       </v-btn>
@@ -40,6 +44,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { ruleOfThree } from '../utils/utils'
+
 export default Vue.extend({
   name: 'Card',
   props: {
@@ -52,12 +58,26 @@ export default Vue.extend({
     return {
       isRenting: false,
       isRentable: true,
+      returnTime: '',
     }
   },
   mounted() {
     this.isRentable = this.canBeRented()
   },
   methods: {
+    //get Current time, calcule new time by adding getMinutesLeft(), return `${hours}h${minutes}`
+    getReturnTime() {
+      const Time = new Date()
+      Time.setMinutes(Time.getMinutes() + this.getMinutesLeft())
+      return `${Time.getHours()}h${Time.getMinutes()}`
+    },
+
+    // procress maxflighttime and chargePct to get the time left
+    getMinutesLeft() {
+      return Math.round(
+        ruleOfThree(100, this.data.maxFlightTimeMinutes, this.data.chargePct)
+      )
+    },
     // from a number between 0 and 100, return color between green, orange and red
     interpolateColor(value: number) {
       if (value < 33) {
@@ -70,10 +90,28 @@ export default Vue.extend({
     },
     // chargePct is under 10% can't rent anymore
     canBeRented() {
-      if (this.data.chargePct < 10) {
+      if (this.data.chargePct < 10 && !this.isRenting) {
         return false
       }
       return true
+    },
+    startRenting() {
+      this.isRenting = !this.isRenting
+      this.returnTime = this.getReturnTime()
+    },
+    // function that discharge the drone 1% every second
+    discharge() {
+      // check if drone can be rented
+      if (this.canBeRented()) {
+        // set renting interval
+        var interval = setInterval(() => {
+          // if drone out of service or not renting, stop discharge
+          if (this.data.chargePct === 0 || this.isRenting === false) {
+            clearInterval(interval)
+          }
+          this.data.chargePct--
+        }, 1000)
+      }
     },
   },
   computed: {
@@ -86,6 +124,13 @@ export default Vue.extend({
       }
       if (this.isRenting == false) {
         return 'success'
+      }
+    },
+  },
+  watch: {
+    isRenting(value) {
+      if (value) {
+        this.discharge()
       }
     },
   },
@@ -119,7 +164,7 @@ export default Vue.extend({
 }
 
 .info-text {
-  width: 100px;
+  width: 120px;
 }
 
 .snd {

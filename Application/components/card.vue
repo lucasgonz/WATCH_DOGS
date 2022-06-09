@@ -2,7 +2,7 @@
   <div class="card">
     <div class="group">
       <!-- Status to component true | false | undefined (drone out of service) -->
-      <status :status="isRenting"></status>
+      <status :status="rentingClass"></status>
       <div class="info-text">
         <b>{{ data.manufacturer }}</b>
         <p class="snd">{{ data.model }}</p>
@@ -28,8 +28,9 @@
         icon
         fab
         small
-        :color="isRenting ? 'error' : 'success'"
-        @click="isRenting = !isRenting"
+        :disabled="canBeRented() ? false : true"
+        :color="rentingClass"
+        @click="canBeRented() ? (isRenting = !isRenting) : undefined"
       >
         <v-icon>{{ isRenting ? 'mdi-stop' : 'mdi-play' }}</v-icon>
       </v-btn>
@@ -50,7 +51,11 @@ export default Vue.extend({
   data() {
     return {
       isRenting: false,
+      isRentable: true,
     }
+  },
+  mounted() {
+    this.isRentable = this.canBeRented()
   },
   methods: {
     // from a number between 0 and 100, return color between green, orange and red
@@ -63,9 +68,27 @@ export default Vue.extend({
         return 'green'
       }
     },
-    // if
+    // chargePct is under 10% can't rent anymore
+    canBeRented() {
+      if (this.data.chargePct < 10) {
+        return false
+      }
+      return true
+    },
   },
-  computed: {},
+  computed: {
+    rentingClass() {
+      if (this.isRentable == false) {
+        return 'grey'
+      }
+      if (this.isRenting == true) {
+        return 'error'
+      }
+      if (this.isRenting == false) {
+        return 'success'
+      }
+    },
+  },
 })
 </script>
 
@@ -101,5 +124,9 @@ export default Vue.extend({
 
 .snd {
   color: rgb(155, 155, 155);
+}
+
+.notUsable {
+  background-color: #939393;
 }
 </style>

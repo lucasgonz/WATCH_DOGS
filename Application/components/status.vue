@@ -1,6 +1,6 @@
 <template>
   <div class="status">
-    <span v-bind:class="classObject" class="dot"></span>
+    <span v-bind:class="status" class="dot"></span>
   </div>
 </template>
 
@@ -10,22 +10,13 @@ export default Vue.extend({
   name: 'Status',
   props: {
     status: {
-      type: Boolean || undefined,
+      type: String,
       default: undefined,
     },
   },
-  computed: {
-    classObject() {
-      if (this.status === undefined) {
-        return {
-          outOfService: true,
-        }
-      }
-      return {
-        active: !this.status,
-        unavailable: this.status,
-      }
-    },
+  computed: {},
+  mounted() {
+    console.log(this.status)
   },
 })
 </script>

@@ -10,7 +10,6 @@
     </div>
     <!-- Chargin bar of drone -->
     <div class="info-text">
-      <p>Usage</p>
       <v-progress-linear
         rounded
         :value="data.chargePct"
@@ -18,14 +17,13 @@
       ></v-progress-linear>
     </div>
     <!-- Return time or time left for drone -->
-    <div v-if="isRenting">
-      <p>Return Time</p>
+    <div>
+      <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
+    </div>
+    <div>
       <p class="snd">{{ returnTime }}</p>
     </div>
-    <div v-else>
-      <p>Can Fly</p>
-      <p class="snd">{{ getMinutesLeft() }} min</p>
-    </div>
+
     <div>
       <!-- Switch renting state and change icon -->
       <v-btn
@@ -63,6 +61,7 @@ export default Vue.extend({
   },
   mounted() {
     this.isRentable = this.canBeRented()
+    this.returnTime = this.getReturnTime()
   },
   methods: {
     //get Current time, calcule new time by adding getMinutesLeft(), return `${hours}h${minutes}`
@@ -106,10 +105,12 @@ export default Vue.extend({
         // set renting interval
         var interval = setInterval(() => {
           // if drone out of service or not renting, stop discharge
-          if (this.data.chargePct === 0 || this.isRenting === false) {
+          if (this.data.chargePct <= 0 || this.isRenting === false) {
+            if (this.data.chargePct <= 0) this.isRentable = false
+
             clearInterval(interval)
           }
-          this.data.chargePct--
+          this.data.chargePct -= 3
         }, 1000)
       }
     },

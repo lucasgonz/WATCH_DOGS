@@ -3,14 +3,24 @@
     <table>
       <!-- Table header -->
       <tr>
-        <th key="name">Name</th>
-        <th>Chargin</th>
-        <th>Time left</th>
-        <th>Return time</th>
-        <th>Rent</th>
+        <th @click="sort(obj.key)" v-for="obj in header" :key="obj.key">
+          {{ obj.title }}
+          <v-icon v-if="obj.key != null" small right color="grey">{{
+            ascending ? 'mdi-arrow-down' : 'mdi-arrow-up'
+          }}</v-icon>
+        </th>
       </tr>
       <!-- Table content with drones data -->
-      <card v-for="drone in drones" :data="drone" :key="drone.model"></card>
+      <card
+        v-on:updateData="
+          (...args) => {
+            updateD(drone, ...args)
+          }
+        "
+        v-for="drone in drones"
+        :data="drone"
+        :key="drone.model"
+      ></card>
     </table>
   </div>
 </template>
@@ -25,6 +35,14 @@ export default {
   data: function () {
     return {
       drones: [],
+      header: {
+        name: { title: 'Name', key: 'model' },
+        charge: { title: 'Chargin', key: 'chargePct' },
+        timeLeft: { title: 'Time left', key: 'timeLeft' },
+        returnTime: { title: 'Return time', key: 'returnTime' },
+        rent: { title: 'Rent', key: null },
+      },
+      ascending: true,
     }
   },
 
@@ -33,6 +51,16 @@ export default {
     this.drones = (await this.$axios.get('/api/drones')).data
     // sort drones by chargePct desc
     this.drones = sortObjectByPropreties(this.drones, 'chargePct', true)
+  },
+  methods: {
+    updateD(old, newd) {
+      this.drones[this.drones.indexOf(old)] = newd
+    },
+    sort(key) {
+      if (key === null) return
+      this.ascending = !this.ascending
+      this.drones = sortObjectByPropreties(this.drones, key, this.ascending)
+    },
   },
 }
 </script>

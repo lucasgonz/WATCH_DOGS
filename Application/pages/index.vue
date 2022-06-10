@@ -5,9 +5,14 @@
       <tr>
         <th @click="sort(obj.key)" v-for="obj in header" :key="obj.key">
           {{ obj.title }}
-          <v-icon v-if="obj.key != null" small right color="grey">{{
-            ascending ? 'mdi-arrow-down' : 'mdi-arrow-up'
-          }}</v-icon>
+          <v-icon
+            @click="ascending = !ascending"
+            v-if="obj.key != null"
+            small
+            right
+            color="grey"
+            >{{ ascending ? 'mdi-arrow-down' : 'mdi-arrow-up' }}</v-icon
+          >
         </th>
       </tr>
       <!-- Table content with drones data -->
@@ -58,7 +63,6 @@ export default {
     },
     sort(key) {
       if (key === null) return
-      this.ascending = !this.ascending
       this.drones = sortObjectByPropreties(this.drones, key, this.ascending)
     },
   },

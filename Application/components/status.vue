@@ -1,5 +1,6 @@
 <template>
-  <div class="status">
+  <div>
+    <!-- circle status indicator -->
     <span v-bind:class="status" class="dot"></span>
   </div>
 </template>
@@ -14,27 +15,23 @@ export default Vue.extend({
       default: undefined,
     },
   },
-  computed: {},
-  mounted() {
-    console.log(this.status)
-  },
 })
 </script>
 
 <style lang="scss" scoped>
+div {
+  margin-top: 10px;
+  float: left;
+}
+
 .dot {
   height: 12px;
   width: 12px;
   background-color: #7d7d7d;
   border-radius: 50%;
   display: inline-block;
-  margin-right: 0px;
+  margin-right: 20px;
   margin-left: 20px;
-}
-
-.status {
-  align-self: center;
-  margin-right: 0px !important;
 }
 
 .active {

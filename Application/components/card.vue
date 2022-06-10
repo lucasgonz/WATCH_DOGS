@@ -1,30 +1,34 @@
 <template>
-  <div class="card">
-    <div class="group">
+  <tr>
+    <td>
       <!-- Status to component true | false | undefined (drone out of service) -->
       <status :status="rentingClass"></status>
-      <div class="info-text">
+      <!-- Drone Name / Model -->
+      <div style="text-align: left">
         <b>{{ data.manufacturer }}</b>
         <p class="snd">{{ data.model }}</p>
       </div>
-    </div>
+    </td>
+
     <!-- Chargin bar of drone -->
-    <div class="info-text">
+    <td class="info-text">
       <v-progress-linear
         rounded
         :value="data.chargePct"
         :color="interpolateColor(data.chargePct)"
       ></v-progress-linear>
-    </div>
-    <!-- Return time or time left for drone -->
-    <div>
-      <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
-    </div>
-    <div>
-      <p class="snd">{{ returnTime }}</p>
-    </div>
+    </td>
 
-    <div>
+    <!-- Return time or time left for drone -->
+    <td>
+      <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
+    </td>
+    <!-- Return time for drone -->
+    <td>
+      <p class="snd">{{ returnTime }}</p>
+    </td>
+
+    <td>
       <!-- Switch renting state and change icon -->
       <v-btn
         icon
@@ -34,10 +38,11 @@
         :color="rentingClass"
         @click="canBeRented() ? startRenting() : undefined"
       >
+        <!-- Icon for renting state Play / Stop -->
         <v-icon>{{ isRenting ? 'mdi-stop' : 'mdi-play' }}</v-icon>
       </v-btn>
-    </div>
-  </div>
+    </td>
+  </tr>
 </template>
 
 <script lang="ts">
@@ -46,12 +51,14 @@ import { ruleOfThree } from '../utils/utils'
 
 export default Vue.extend({
   name: 'Card',
+
   props: {
     data: {
       type: Object,
       default: null,
     },
   },
+
   data() {
     return {
       isRenting: false,
@@ -59,10 +66,12 @@ export default Vue.extend({
       returnTime: '',
     }
   },
+
   mounted() {
     this.isRentable = this.canBeRented()
     this.returnTime = this.getReturnTime()
   },
+
   methods: {
     //get Current time, calcule new time by adding getMinutesLeft(), return `${hours}h${minutes}`
     getReturnTime() {
@@ -77,17 +86,13 @@ export default Vue.extend({
         ruleOfThree(100, this.data.maxFlightTimeMinutes, this.data.chargePct)
       )
     },
+
     // from a number between 0 and 100, return color between green, orange and red
     interpolateColor(value: number) {
-      if (value < 33) {
-        return 'red'
-      } else if (value < 66) {
-        return 'orange'
-      } else {
-        return 'green'
-      }
+      return value < 33 ? 'red' : value < 66 ? 'orange' : 'green'
     },
-    // chargePct is under 10% can't rent anymore
+
+    // chargePct is under 10% or isRenting can't rent
     canBeRented() {
       if (this.data.chargePct < 10 && !this.isRenting) {
         return false
@@ -120,12 +125,7 @@ export default Vue.extend({
       if (this.isRentable == false) {
         return 'grey'
       }
-      if (this.isRenting == true) {
-        return 'error'
-      }
-      if (this.isRenting == false) {
-        return 'success'
-      }
+      return this.isRenting ? 'error' : 'success'
     },
   },
   watch: {
@@ -139,40 +139,29 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.card {
+td {
   background-color: $secondary;
-  border-radius: 5px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  padding: 15px 0px;
+  padding-left: 20px;
 }
 
-.card div {
-  display: flex;
-  flex-direction: column;
-  align-items: baseline;
+tr {
+  margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
-.card div * {
-  margin: 7px 12px;
+td:first-child,
+th:first-child {
+  border-radius: 10px 0 0 10px;
 }
 
-.group {
-  flex-direction: row !important;
-}
-
-.info-text {
-  width: 120px;
+// Set border-radius on the top-right and bottom-right of the last table data on the table row
+td:last-child,
+th:last-child {
+  border-radius: 0 10px 10px 0;
 }
 
 .snd {
   color: rgb(155, 155, 155);
-}
-
-.notUsable {
-  background-color: #939393;
 }
 </style>

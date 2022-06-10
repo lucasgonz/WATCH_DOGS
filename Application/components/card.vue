@@ -1,48 +1,37 @@
 <template>
-  <tr>
-    <td>
-      <!-- Status to component true | false | undefined (drone out of service) -->
-      <status :status="rentingClass"></status>
-      <!-- Drone Name / Model -->
-      <div style="text-align: left">
-        <b>{{ data.manufacturer }}</b>
-        <p class="snd">{{ data.model }}</p>
-      </div>
-    </td>
+   <tr>
+      <td>
+         <!-- Status to component true | false | undefined (drone out of service) -->
+         <status :status="rentingClass"></status>
+         <!-- Drone Name / Model -->
+         <div style="text-align: left">
+            <b>{{ data.manufacturer }}</b>
+            <p class="snd">{{ data.model }}</p>
+         </div>
+      </td>
 
-    <!-- Chargin bar of drone -->
-    <td class="info-text">
-      <v-progress-linear
-        rounded
-        :value="data.chargePct"
-        :color="interpolateColor(data.chargePct)"
-      ></v-progress-linear>
-    </td>
+      <!-- Chargin bar of drone -->
+      <td class="info-text">
+         <v-progress-linear rounded :value="data.chargePct" :color="interpolateColor(data.chargePct)"></v-progress-linear>
+      </td>
 
-    <!-- Return time or time left for drone -->
-    <td>
-      <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
-    </td>
-    <!-- Return time for drone -->
-    <td>
-      <p class="snd">{{ returnTime }}</p>
-    </td>
+      <!-- Return time or time left for drone -->
+      <td>
+         <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
+      </td>
+      <!-- Return time for drone -->
+      <td>
+         <p class="snd">{{ returnTime }}</p>
+      </td>
 
-    <td>
-      <!-- Switch renting state and change icon -->
-      <v-btn
-        icon
-        fab
-        small
-        :disabled="canBeRented() ? false : true"
-        :color="rentingClass"
-        @click="canBeRented() ? startRenting() : undefined"
-      >
-        <!-- Icon for renting state Play / Stop -->
-        <v-icon>{{ isRenting ? 'mdi-stop' : 'mdi-play' }}</v-icon>
-      </v-btn>
-    </td>
-  </tr>
+      <td>
+         <!-- Switch renting state and change icon -->
+         <v-btn icon fab small :disabled="canBeRented() ? false : true" :color="rentingClass" @click="canBeRented() ? startRenting() : undefined">
+            <!-- Icon for renting state Play / Stop -->
+            <v-icon>{{ isRenting ? 'mdi-stop' : 'mdi-play' }}</v-icon>
+         </v-btn>
+      </td>
+   </tr>
 </template>
 
 <script lang="ts">
@@ -50,127 +39,126 @@ import Vue from 'vue'
 import { ruleOfThree } from '../utils/utils'
 
 export default Vue.extend({
-  name: 'Card',
+   name: 'Card',
 
-  props: {
-    data: {
-      type: Object,
-      default: null,
-    },
-  },
+   props: {
+      data: {
+         type: Object,
+         default: null,
+      },
+   },
 
-  data() {
-    return {
-      isRenting: false,
-      isRentable: true,
-      returnTime: '',
-    }
-  },
-
-  mounted() {
-    this.isRentable = this.canBeRented()
-    this.returnTime = this.getReturnTime()
-    this.updateData()
-  },
-
-  methods: {
-    //get Current time, calcule new time by adding getMinutesLeft(), return `${hours}h${minutes}`
-    getReturnTime() {
-      const Time = new Date()
-      Time.setMinutes(Time.getMinutes() + this.getMinutesLeft())
-      return `${Time.getHours()}h${Time.getMinutes()}`
-    },
-
-    // procress maxflighttime and chargePct to get the time left
-    getMinutesLeft() {
-      return Math.round(
-        ruleOfThree(100, this.data.maxFlightTimeMinutes, this.data.chargePct)
-      )
-    },
-    updateData() {
-      const values = {
-        ...this.data,
-        timeLeft: this.getMinutesLeft(),
-        returnTime: this.getReturnTime(),
+   data() {
+      return {
+         isRenting: false,
+         isRentable: true,
+         returnTime: '',
       }
-      this.$emit('updateData', values)
-    },
+   },
 
-    // from a number between 0 and 100, return color between green, orange and red
-    interpolateColor(value: number) {
-      return value < 33 ? 'red' : value < 66 ? 'orange' : 'green'
-    },
-
-    // chargePct is under 10% or isRenting can't rent
-    canBeRented() {
-      if (this.data.chargePct < 10 && !this.isRenting) {
-        return false
-      }
-      return true
-    },
-    startRenting() {
-      this.isRenting = !this.isRenting
+   mounted() {
+      this.isRentable = this.canBeRented()
       this.returnTime = this.getReturnTime()
-    },
-    // function that discharge the drone 1% every second
-    discharge() {
-      // check if drone can be rented
-      if (this.canBeRented()) {
-        // set renting interval
-        var interval = setInterval(() => {
-          // if drone out of service or not renting, stop discharge
-          if (this.data.chargePct <= 0 || this.isRenting === false) {
-            if (this.data.chargePct <= 0) this.isRentable = false
+      this.updateData()
+   },
 
-            clearInterval(interval)
-          }
-          this.data.chargePct -= 3
-        }, 1000)
-      }
-    },
-  },
-  computed: {
-    rentingClass() {
-      if (this.isRentable == false) {
-        return 'grey'
-      }
-      return this.isRenting ? 'error' : 'success'
-    },
-  },
-  watch: {
-    isRenting(value) {
-      if (value) {
-        this.discharge()
-      }
-    },
-  },
+   methods: {
+      //get Current time, calcule new time by adding getMinutesLeft(), return `${hours}h${minutes}`
+      getReturnTime() {
+         const Time = new Date()
+         Time.setMinutes(Time.getMinutes() + this.getMinutesLeft())
+         return `${Time.getHours()}h${Time.getMinutes()}`
+      },
+
+      // procress maxflighttime and chargePct to get the time left
+      getMinutesLeft() {
+         return Math.round(ruleOfThree(100, this.data.maxFlightTimeMinutes, this.data.chargePct))
+      },
+      updateData() {
+         const values = {
+            ...this.data,
+            timeLeft: this.getMinutesLeft(),
+            returnTime: this.getReturnTime(),
+         }
+         this.$emit('updateData', values)
+      },
+
+      // from a number between 0 and 100, return color between green, orange and red
+      interpolateColor(value: number) {
+         return value < 33 ? 'red' : value < 66 ? 'orange' : 'green'
+      },
+
+      // chargePct is under 10% or isRenting can't rent
+      canBeRented() {
+         if (this.data.chargePct < 10 && !this.isRenting) {
+            return false
+         }
+         return true
+      },
+      startRenting() {
+         this.isRenting = !this.isRenting
+         this.returnTime = this.getReturnTime()
+      },
+      // function that discharge the drone 1% every second
+      discharge() {
+         // check if drone can be rented
+         if (this.canBeRented()) {
+            // set renting interval
+            var interval = setInterval(() => {
+               // if drone out of service or not renting, stop discharge
+               if (this.data.chargePct <= 0 || this.isRenting === false) {
+                  if (this.data.chargePct <= 0) this.isRentable = false
+
+                  clearInterval(interval)
+               }
+               this.data.chargePct -= 3
+            }, 1000)
+         }
+      },
+   },
+   computed: {
+      rentingClass() {
+         if (this.isRentable == false) {
+            return 'grey'
+         }
+         if (this.isRenting) return 'error'
+         else return 'success'
+      },
+   },
+   watch: {
+      isRenting(value) {
+         if (value) {
+            this.discharge()
+         }
+      },
+   },
 })
 </script>
 
 <style lang="scss" scoped>
 td {
-  background-color: $secondary;
-  padding: 15px 0px;
-  padding-left: 20px;
+   background-color: $secondary;
+   padding: 15px 0px;
+   padding-left: 20px;
 }
 
 tr {
-  margin-bottom: 10px;
-  flex-shrink: 0;
+   margin-bottom: 10px;
+   flex-shrink: 0;
 }
 
 td:first-child,
 th:first-child {
-  border-radius: 10px 0 0 10px;
+   border-radius: 10px 0 0 10px;
 }
 
 // Set border-radius on the top-right and bottom-right of the last table data on the table row
 td:last-child,
 th:last-child {
-  border-radius: 0 10px 10px 0;
+   border-radius: 0 10px 10px 0;
 }
 
 .snd {
-  color: rgb(155, 155, 155);
+   color: rgb(155, 155, 155);
 }
 </style>

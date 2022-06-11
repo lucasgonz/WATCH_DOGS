@@ -13,9 +13,14 @@ $success: #4caf50;
 $warning: #ffc107;
 
 * {
-  font-size: 14px;
+   font-size: 14px;
 }
 
 p {
-  margin: 0px;
+   margin: 0px;
+}
+
+:root {
+   // status colors
+   --status-indicator-color: grey !important;
 }

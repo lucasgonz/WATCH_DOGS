@@ -1,18 +1,26 @@
 <template>
    <div>
       <!-- circle status indicator -->
-      <span v-bind:class="status" class="dot"></span>
+      <status-indicator class="dot" :status="status" :pulse="pulse" />
    </div>
 </template>
 
 <script lang="ts">
+import { StatusIndicator } from 'vue-status-indicator'
 import Vue from 'vue'
 export default Vue.extend({
+   components: {
+      StatusIndicator,
+   },
    name: 'Status',
    props: {
       status: {
          type: String,
          default: undefined,
+      },
+      pulse: {
+         type: Boolean,
+         default: false,
       },
    },
 })
@@ -27,18 +35,8 @@ div {
 .dot {
    height: 12px;
    width: 12px;
-   background-color: #7d7d7d;
-   border-radius: 50%;
    display: inline-block;
    margin-right: 20px;
    margin-left: 20px;
-}
-
-.active {
-   background-color: #4caf50;
-}
-
-.unavailable {
-   background-color: #f44336;
 }
 </style>

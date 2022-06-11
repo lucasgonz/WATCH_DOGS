@@ -52,11 +52,6 @@ export default {
       // sort drones by chargePct desc
       this.drones = sortObjectByPropreties(this.drones, 'chargePct', true)
    },
-   async beforeUnmount() {
-      console.log(121)
-      // post current drones state to api
-      await this.$axios.post('/api/drones', this.drones)
-   },
    methods: {
       updateD(old, newd) {
          this.drones[this.drones.indexOf(old)] = newd

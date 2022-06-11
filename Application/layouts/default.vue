@@ -19,6 +19,7 @@
          </v-btn>
 
          <v-toolbar-title v-text="title" />
+         <v-progress-linear :active="loading" :indeterminate="loading" absolute bottom color="green"></v-progress-linear>
          <v-spacer />
       </v-app-bar>
       <v-main>
@@ -34,6 +35,7 @@ export default {
    name: 'DefaultLayout',
    data() {
       return {
+         loading: true,
          clipped: false,
          drawer: false,
          fixed: false,
@@ -49,6 +51,10 @@ export default {
          rightDrawer: false,
          title: 'Drone Shop',
       }
+   },
+   mounted() {
+      // Loading bard just fancy
+      setTimeout(() => (this.loading = false), 1000)
    },
 }
 </script>

@@ -2,7 +2,7 @@
    <tr>
       <td>
          <!-- Status to component true | false | undefined (drone out of service) -->
-         <status :status="rentingClass"></status>
+         <status :status="statusClass" :pulse="isRenting"></status>
          <!-- Drone Name / Model -->
          <div style="text-align: left">
             <b>{{ data.manufacturer }}</b>
@@ -67,7 +67,7 @@ export default Vue.extend({
       getReturnTime() {
          const Time = new Date()
          Time.setMinutes(Time.getMinutes() + this.getMinutesLeft())
-         return `${Time.getHours()}h${Time.getMinutes()}`
+         return Time.toLocaleTimeString()
       },
 
       // procress maxflighttime and chargePct to get the time left
@@ -105,18 +105,26 @@ export default Vue.extend({
          if (this.canBeRented()) {
             // set renting interval
             var interval = setInterval(() => {
+               this.data.chargePct -= 3
+
                // if drone out of service or not renting, stop discharge
                if (this.data.chargePct <= 0 || this.isRenting === false) {
                   if (this.data.chargePct <= 0) this.isRentable = false
 
                   clearInterval(interval)
                }
-               this.data.chargePct -= 3
             }, 1000)
          }
       },
    },
    computed: {
+      statusClass() {
+         if (this.isRentable == false) {
+            return ''
+         }
+         if (this.isRenting) return 'negative'
+         else return 'positive'
+      },
       rentingClass() {
          if (this.isRentable == false) {
             return 'grey'

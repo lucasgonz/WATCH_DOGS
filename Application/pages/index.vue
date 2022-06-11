@@ -11,16 +11,7 @@
             </th>
          </tr>
          <!-- Table content with drones data -->
-         <card
-            v-on:updateData="
-               (...args) => {
-                  updateD(drone, ...args)
-               }
-            "
-            v-for="drone in drones"
-            :data="drone"
-            :key="drone.model"
-         ></card>
+         <card v-for="drone in drones" :data="drone" :key="drone.model"></card>
       </table>
    </div>
 </template>
@@ -48,14 +39,12 @@ export default {
 
    async mounted() {
       //fetch drones from api with axios
+
       this.drones = (await this.$axios.get('/api/drones')).data
       // sort drones by chargePct desc
       this.drones = sortObjectByPropreties(this.drones, 'chargePct', true)
    },
    methods: {
-      updateD(old, newd) {
-         this.drones[this.drones.indexOf(old)] = newd
-      },
       sort(key) {
          if (key === null) return
          this.drones = sortObjectByPropreties(this.drones, key, this.ascending)

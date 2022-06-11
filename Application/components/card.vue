@@ -59,7 +59,6 @@ export default Vue.extend({
    mounted() {
       this.isRentable = this.canBeRented()
       this.returnTime = this.getReturnTime()
-      this.updateData()
    },
 
    methods: {
@@ -73,14 +72,6 @@ export default Vue.extend({
       // procress maxflighttime and chargePct to get the time left
       getMinutesLeft() {
          return Math.round(ruleOfThree(100, this.data.maxFlightTimeMinutes, this.data.chargePct))
-      },
-      updateData() {
-         const values = {
-            ...this.data,
-            timeLeft: this.getMinutesLeft(),
-            returnTime: this.getReturnTime(),
-         }
-         this.$emit('updateData', values)
       },
 
       // from a number between 0 and 100, return color between green, orange and red

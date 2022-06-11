@@ -21,7 +21,7 @@
       </td>
       <!-- Return time for drone -->
       <td>
-         <p class="snd">{{ returnTime }}</p>
+         <p class="snd">{{ !isRentable ? 'Out of service' : isRenting ? data.returnTime : 'Available' }}</p>
       </td>
 
       <td>
@@ -52,13 +52,13 @@ export default Vue.extend({
       return {
          isRenting: false,
          isRentable: true,
-         returnTime: '',
       }
    },
 
    mounted() {
       this.isRentable = this.canBeRented()
-      this.returnTime = this.getReturnTime()
+      this.data.returnTime = this.getReturnTime()
+      this.data.timeLeft = this.getMinutesLeft()
    },
 
    methods: {
@@ -66,7 +66,10 @@ export default Vue.extend({
       getReturnTime() {
          const Time = new Date()
          Time.setMinutes(Time.getMinutes() + this.getMinutesLeft())
-         return Time.toLocaleTimeString()
+         //format time to `hh:mm`
+         return `${Time.getHours()}:${Time.getMinutes()}`
+
+         return Time
       },
 
       // procress maxflighttime and chargePct to get the time left
@@ -88,7 +91,7 @@ export default Vue.extend({
       },
       startRenting() {
          this.isRenting = !this.isRenting
-         this.returnTime = this.getReturnTime()
+         this.data.returnTime = this.getReturnTime()
       },
       // function that discharge the drone 1% every second
       discharge() {
@@ -113,15 +116,15 @@ export default Vue.extend({
          if (this.isRentable == false) {
             return ''
          }
-         if (this.isRenting) return 'negative'
+         if (this.isRenting) return 'intermediary'
          else return 'positive'
       },
       rentingClass() {
          if (this.isRentable == false) {
             return 'grey'
          }
-         if (this.isRenting) return 'error'
-         else return 'success'
+         if (this.isRenting) return 'orange'
+         else return 'green'
       },
    },
    watch: {

@@ -2,7 +2,7 @@
    <tr>
       <td>
          <!-- Status to component true | false | undefined (drone out of service) -->
-         <status :status="statusClass" :pulse="isRenting"></status>
+         <status :status="statusClass" :pulse="isRenting && isRentable"></status>
          <!-- Drone Name / Model -->
          <div style="text-align: left">
             <b>{{ data.manufacturer }}</b>
@@ -19,9 +19,10 @@
       <td>
          <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
       </td>
+
       <!-- Return time for drone -->
       <td>
-         <p class="snd">{{ !isRentable ? 'Out of service' : isRenting ? data.returnTime : 'Available' }}</p>
+         <p class="snd">{{ isRenting ? data.returnTime : canBeRented() ? 'Available' : 'Out of service' }}</p>
       </td>
 
       <td>
@@ -79,7 +80,7 @@ export default Vue.extend({
 
       // from a number between 0 and 100, return color between green, orange and red
       interpolateColor(value: number) {
-         return value < 33 ? 'red' : value < 66 ? 'orange' : 'green'
+         return value <= 0 ? 'grey' : value < 33 ? 'red' : value < 66 ? 'orange' : 'green'
       },
 
       // chargePct is under 10% or isRenting can't rent
@@ -113,14 +114,17 @@ export default Vue.extend({
    },
    computed: {
       statusClass() {
-         if (this.isRentable == false) {
+         if (!this.isRentable) {
             return ''
          }
-         if (this.isRenting) return 'intermediary'
-         else return 'positive'
+
+         if (this.isRenting) {
+            if (this.data.chargePct <= 33) return 'negative'
+            else 'intermediary'
+         } else return 'positive'
       },
       rentingClass() {
-         if (this.isRentable == false) {
+         if (!this.isRentable) {
             return 'grey'
          }
          if (this.isRenting) return 'orange'

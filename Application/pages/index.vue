@@ -3,8 +3,10 @@
       <table>
          <!-- Table header -->
          <tr>
+            <!-- For each title in data.header - sort function by key value -->
             <th @click="sort(obj.key)" v-for="obj in header" :key="obj.key">
                {{ obj.title }}
+               <!-- Arrow Icon Change ascending value if available -->
                <v-icon @click="ascending = !ascending" v-if="obj.key != null" small right color="grey">{{
                   ascending ? 'mdi-arrow-down' : 'mdi-arrow-up'
                }}</v-icon>

@@ -18,8 +18,7 @@ export function sortObjectByPropreties(data: Array<Object>, propretie: String, d
   ex : batterie = 100 --> maxTimeflight = 22 min  
        batterie = 65  --> Timeflight = ?
 
-       22 * 65 * 100 = ?
-  
+       22 * 65 * 100 =  14 min 
 */
 export function ruleOfThree(a: number, b: number, c: number): number {
    return (b * c) / a

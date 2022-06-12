@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3021
+const port = 3001
 
 // import drone route from routes folder
 const drones = require('./routes/Drones')

@@ -54,7 +54,7 @@ export default {
    },
    mounted() {
       // Loading bard just fancy
-      setTimeout(() => (this.loading = false), 1000)
+      setTimeout(() => (this.loading = false), 2000)
    },
 }
 </script>

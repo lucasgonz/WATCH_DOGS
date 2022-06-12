@@ -1,7 +1,7 @@
 <template>
    <tr>
       <td>
-         <!-- Status to component true | false | undefined (drone out of service) -->
+         <!-- Status to component positive | intermediary  | negative | undefined (drone out of service) -->
          <status :status="statusClass" :pulse="isRenting && isRentable"></status>
          <!-- Drone Name / Model -->
          <div style="text-align: left">
@@ -12,12 +12,13 @@
 
       <!-- Chargin bar of drone -->
       <td class="info-text">
+         <!-- Color change depending chargPct -->
          <v-progress-linear rounded :value="data.chargePct" :color="interpolateColor(data.chargePct)"></v-progress-linear>
       </td>
 
       <!-- Return time or time left for drone -->
       <td>
-         <p class="snd">{{ Math.max(0, getMinutesLeft()) }} min</p>
+         <p class="snd">{{ getMinutesLeft() }} min</p>
       </td>
 
       <!-- Return time for drone -->
@@ -38,6 +39,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { ruleOfThree } from '../utils/utils'
+import { config } from '../droneConfig'
 
 export default Vue.extend({
    name: 'Card',
@@ -55,7 +57,6 @@ export default Vue.extend({
          isRentable: true,
       }
    },
-
    mounted() {
       this.isRentable = this.canBeRented()
       this.data.returnTime = this.getReturnTime()
@@ -68,9 +69,7 @@ export default Vue.extend({
          const Time = new Date()
          Time.setMinutes(Time.getMinutes() + this.getMinutesLeft())
          //format time to `hh:mm`
-         return `${Time.getHours()}:${Time.getMinutes()}`
-
-         return Time
+         return Time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       },
 
       // procress maxflighttime and chargePct to get the time left
@@ -85,11 +84,12 @@ export default Vue.extend({
 
       // chargePct is under 10% or isRenting can't rent
       canBeRented() {
-         if (this.data.chargePct < 10 && !this.isRenting) {
+         if (this.data.chargePct < config.minCharge && !this.isRenting) {
             return false
          }
          return true
       },
+      // Set variables and get Return Time
       startRenting() {
          this.isRenting = !this.isRenting
          this.data.returnTime = this.getReturnTime()
@@ -100,29 +100,34 @@ export default Vue.extend({
          if (this.canBeRented()) {
             // set renting interval
             var interval = setInterval(() => {
-               this.data.chargePct -= 3
+               // get charge % left - set  0 as mini value
+               this.data.chargePct = Math.max(0, this.data.chargePct - config.dischargeRate)
+               // update time left
+               this.data.timeLeft = this.getMinutesLeft()
 
                // if drone out of service or not renting, stop discharge
                if (this.data.chargePct <= 0 || this.isRenting === false) {
-                  if (this.data.chargePct <= 0) this.isRentable = false
+                  if (this.data.chargePct <= config.minCharge) (this.isRentable = false), (this.isRenting = false)
 
                   clearInterval(interval)
                }
-            }, 1000)
+            }, config.timeRate * 1000)
          }
       },
    },
    computed: {
+      // status color change denpending chargpPct && renting state
       statusClass() {
-         if (!this.isRentable) {
+         if (this.isRentable == false) {
             return ''
          }
 
          if (this.isRenting) {
             if (this.data.chargePct <= 33) return 'negative'
-            else 'intermediary'
+            else return 'intermediary'
          } else return 'positive'
       },
+      // Same for button
       rentingClass() {
          if (!this.isRentable) {
             return 'grey'
@@ -132,6 +137,7 @@ export default Vue.extend({
       },
    },
    watch: {
+      // watch renting variable changes --> discharge if isRenting
       isRenting(value) {
          if (value) {
             this.discharge()
